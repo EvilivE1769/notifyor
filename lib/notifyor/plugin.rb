@@ -24,11 +24,11 @@ module Notifyor
           configuration[:only].each do |action|
             case action
               when :create
-                self.after_commit -> { ::Notifyor.configuration.redis_connection.publish channel, configuration[:messages][:create].call(self) }, on: :create, if: -> { configuration[:only].include? :create }
+                self.after_commit -> { ::Notifyor.configuration.redis_connection.publish_channel, configuration[:messages][:create].call(self) }, on: :create, if: -> { configuration[:only].include? :create }
               when :update
-                self.after_commit -> { ::Notifyor.configuration.redis_connection.publish channel, configuration[:messages][:update].call(self) }, on: :update, if: -> { configuration[:only].include? :update }
+                self.after_commit -> { ::Notifyor.configuration.redis_connection.publish_channel, configuration[:messages][:update].call(self) }, on: :update, if: -> { configuration[:only].include? :update }
               when :destroy
-                self.before_destroy -> { ::Notifyor.configuration.redis_connection.publish channel, configuration[:messages][:destroy].call(self) }, if: -> { configuration[:only].include? :destroy }
+                self.before_destroy -> { ::Notifyor.configuration.redis_connection.publish_channel, configuration[:messages][:destroy].call(self) }, if: -> { configuration[:only].include? :destroy }
               else
                 #nop
             end
